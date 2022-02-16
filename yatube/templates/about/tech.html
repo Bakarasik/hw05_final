@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Технологии{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <h1>Вот что я умею</h1>
+            <aside class="col-12 col-md-3">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        Python
+                    </li>
+                    <li class="list-group-item">
+                        Django
+                    </li>
+                    <li class="list-group-item">
+                        Формировать поисковые запросы
+                    </li>
+                    <li class="list-group-item">
+                        Читать документацию
+                    </li>
+                </ul>
+            </aside>
+            {% comment %}
+                Статья
+                Займет всю ширину блока на мобильном
+                и 75% при размерах экрана ≥768px
+            {% endcomment %}
+            <article class="col-12 col-md-9">
+                <p>По моей личной статистике примерно 30% материала усваевается сразу,
+                    еще 20% в процессе выполнения задания и повторном прочтении,
+                    еще 35% при выполнении финального проекта спринта
+                    и 10% усваиваются соместно с ревьювером.
+                </p>
+                <p>Где же еще 5%, спросите вы? Узнаем в следующих спринтах.</p>
+            </article>
+        </div>
+    </div>
+{% endblock %}

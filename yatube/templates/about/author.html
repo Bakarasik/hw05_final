@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Об авторе проекта
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Привет, я автор этого проекта</h1>
+        <div class="row">
+            <div class="col-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'img/Pushka.jpg' %}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Пушка</h5>
+                        <p class="card-text">Мой прекрасный помошник в этом нелегком деле.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-9" style="background:MintCream;">
+                <article>
+                    <h5>
+                        Этот сайт создан Анной под менторством Яндекс.Практикума.
+                    </h5>
+                    <p>
+                        В этом направлении меня толкнули:
+                        скука и
+                        моя большая нелюбовь к ней. А еще желание заработать много деняк.
+                    </p>
+                    <p>Помогли:
+                    <ul>
+                        <li>Моя любимая кошка Пушка</li>
+                        <li>Эргономичное игровое кресло</li>
+                        <li>Соседи, которые не прибегают на мои крики при неверно решенном задании</li>
+                        <li>Моя семья, которая снабжает меня любовью и заботой</li>
+
+                    </ul>
+                    </p>
+                    <div class="card">
+                        <div class="card-header">
+                            Цитата
+                        </div>
+                        <div class="card-body">
+                            <blockquote class="blockquote mb-0">
+                                <p>Опять в своем компьютере сидишь! Тебе заняться нечем?</p>
+                                <footer class="blockquote-footer">Моя бабушка</footer>
+                            </blockquote>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+{% endblock %}
