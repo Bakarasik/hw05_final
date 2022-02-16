@@ -63,6 +63,7 @@ class Profile(ListView):
             ).exists()
         context['author'] = author
         context['following'] = following
+        context['is_not_author'] = self.request.user != author
         return context
 
 
@@ -163,7 +164,8 @@ class ProfileFollow(LoginRequiredMixin, View):
     def get(self, request, username):
         user = request.user
         author = get_object_or_404(User, username=username)
-        Follow.objects.get_or_create(user=user, author=author)
+        if user != author:
+            Follow.objects.get_or_create(user=user, author=author)
         return redirect('posts:profile', username)
 
 
