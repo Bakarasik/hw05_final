@@ -228,10 +228,10 @@ class PostsViewTests(TestCase):
             'posts:profile_follow',
             kwargs={'username': PostsViewTests.user.username}
         ),
-                         reverse(
-            'posts:profile_unfollow',
-            kwargs={'username': PostsViewTests.user.username}
-        ))
+                          reverse(
+                              'posts:profile_unfollow',
+                              kwargs={'username': PostsViewTests.user.username}
+                          ))
 
         self.follower.get(reversed_names[0], follow=True)
 
