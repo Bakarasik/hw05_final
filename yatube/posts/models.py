@@ -38,12 +38,12 @@ class Post(CreatedModel):
         blank=True
     )
 
-    def __str__(self):
-        return self.text[:15]
-
     class Meta:
         ordering = ('-created',)
         default_related_name = 'posts'
+
+    def __str__(self):
+        return self.text[:15]
 
 
 class Comment(CreatedModel):

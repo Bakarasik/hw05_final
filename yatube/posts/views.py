@@ -16,6 +16,11 @@ class Index(ListView):
     paginate_by = OBJ_PER_PAGE
     model = Post
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['index'] = True
+        return context
+
 
 class GroupPosts(ListView):
     template_name = 'posts/group_list.html'
@@ -158,6 +163,11 @@ class FollowIndex(LoginRequiredMixin, ListView):
         user = self.request.user
         post_list = Post.objects.filter(author__following__user=user)
         return post_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['follow'] = True
+        return context
 
 
 class ProfileFollow(LoginRequiredMixin, View):

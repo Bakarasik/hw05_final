@@ -44,7 +44,7 @@ class PostFormTests(TestCase):
             cls.urls_info
         )
 
-        small_gif = (
+        cls.small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x02\x00'
             b'\x01\x00\x80\x00\x00\x00\x00\x00'
             b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
@@ -54,7 +54,7 @@ class PostFormTests(TestCase):
         )
         cls.uploaded = SimpleUploadedFile(
             name='small.gif',
-            content=small_gif,
+            content=cls.small_gif,
             content_type='image/gif'
         )
 
@@ -109,7 +109,7 @@ class PostFormTests(TestCase):
             last_post.text: form_data['text'],
             last_post.author: PostFormTests.user,
             last_post.group: PostFormTests.group,
-            last_post.image: 'posts/small.gif'
+            last_post.image.read(): PostFormTests.small_gif
         }
 
         for value, expected in expected_values.items():
@@ -138,7 +138,7 @@ class PostFormTests(TestCase):
         self.assertRedirects(response, redirect)
 
     def test_edit_post_with_group_form(self):
-        """Валидная форма редактирует пост."""
+        """Валидная форма редактирует пост c группой."""
         form_data = {
             'text': 'Тестовый текст 2 c группой',
             'group': PostFormTests.group.pk
@@ -164,6 +164,7 @@ class PostFormTests(TestCase):
         self.assertRedirects(response, redirect)
 
     def test_new_post_with_group_is_shown(self):
+        """Новый пост с группой виден."""
         posts_counts = dict()
         reversed_names = (
             PostFormTests.reversed_pages_names['posts:index'],
@@ -181,7 +182,7 @@ class PostFormTests(TestCase):
             'author': PostFormTests.user
         }
 
-        response = self.authorized_client.post(
+        self.authorized_client.post(
             PostFormTests.reversed_pages_names['posts:post_create'],
             data=form_data,
             follow=True

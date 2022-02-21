@@ -11,7 +11,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
-from ..models import Post, Group, Follow
+from ..models import Post, Group, Follow, Comment
 from ..utils import get_urls_info, get_reversed_names, OBJ_PER_PAGE
 
 User = get_user_model()
@@ -182,7 +182,7 @@ class PostsViewTests(TestCase):
         self.assertTrue(response.context['is_edit'])
 
     def test_added_comment_is_shown(self):
-        """Созданный пост виден"""
+        """Комментарий создается и виден."""
         reversed_name = reverse(
             'posts:add_comment',
             kwargs={'post_id': PostsViewTests.post.id}
@@ -190,10 +190,22 @@ class PostsViewTests(TestCase):
         form_fields = {
             'text': 'Текст комментария',
         }
+        comment_existing_before_creation = Comment.objects.filter(
+            text='Текст комментария',
+            post_id=PostsViewTests.post.id
+        ).exists()
+        self.assertFalse(comment_existing_before_creation)
+
         self.authorized_client.post(
             reversed_name,
             data=form_fields,
             follow=True)
+
+        comment_existing_after_creation = Comment.objects.filter(
+            text='Текст комментария',
+            post_id=PostsViewTests.post.id
+        ).exists()
+        self.assertTrue(comment_existing_after_creation)
 
         post_detail = self.client.get(
             reverse('posts:post_detail',
@@ -201,31 +213,44 @@ class PostsViewTests(TestCase):
                     )
         )
 
-        comment = post_detail.context['comments'][0]
+        post_comment = post_detail.context['comments'][0]
         expected_values = {
-            comment.author: PostsViewTests.user,
-            comment.text: form_fields['text'],
+            post_comment.author: PostsViewTests.user,
+            post_comment.text: form_fields['text'],
         }
         for value, expected in expected_values.items():
             with self.subTest(value=value):
                 self.assertEqual(value, expected)
 
-    def test_auth_user_can_follow(self):
-        """Зарегестрированный пользователь может подписаться."""
-        reversed_name = reverse(
+    def test_auth_user_can_follow_and_unfollow(self):
+        """Зарегестрированный пользователь может подписаться и отписаться."""
+        reversed_names = (reverse(
             'posts:profile_follow',
             kwargs={'username': PostsViewTests.user.username}
-        )
-        self.follower.get(reversed_name, follow=True)
+        ),
+                         reverse(
+            'posts:profile_unfollow',
+            kwargs={'username': PostsViewTests.user.username}
+        ))
+
+        self.follower.get(reversed_names[0], follow=True)
 
         follow = Follow.objects.filter(
             user=PostsViewTests.follower_user,
             author=PostsViewTests.user
         ).exists()
-
         self.assertTrue(follow)
 
+        self.follower.get(reversed_names[1], follow=True)
+
+        follow = Follow.objects.filter(
+            user=PostsViewTests.follower_user,
+            author=PostsViewTests.user
+        ).exists()
+        self.assertFalse(follow)
+
     def test_follow_author_is_shown_correctly(self):
+        """Подписки корректно отображаются в Index Follow."""
         cache.clear()
         reversed_name = reverse(
             'posts:profile_follow',
@@ -258,7 +283,7 @@ class PostsViewTests(TestCase):
 
         response = self.authorized_client.get(reversed_name)
         cached_context = response.content
-        post = Post.objects.get(id=1)
+        post = Post.objects.all().order_by('-id')[0]
         post.delete()
         response = self.authorized_client.get(reversed_name)
         self.assertEqual(response.content, cached_context)
