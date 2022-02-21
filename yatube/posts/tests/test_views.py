@@ -224,16 +224,16 @@ class PostsViewTests(TestCase):
 
     def test_auth_user_can_follow_and_unfollow(self):
         """Зарегестрированный пользователь может подписаться и отписаться."""
-        reversed_names = (reverse(
+        reversed_follow = reverse(
             'posts:profile_follow',
             kwargs={'username': PostsViewTests.user.username}
-        ),
-                          reverse(
-                              'posts:profile_unfollow',
-                              kwargs={'username': PostsViewTests.user.username}
-                          ))
+        )
+        reversed_unfollow = reverse(
+            'posts:profile_unfollow',
+            kwargs={'username': PostsViewTests.user.username}
+        )
 
-        self.follower.get(reversed_names[0], follow=True)
+        self.follower.get(reversed_follow, follow=True)
 
         follow = Follow.objects.filter(
             user=PostsViewTests.follower_user,
@@ -241,7 +241,7 @@ class PostsViewTests(TestCase):
         ).exists()
         self.assertTrue(follow)
 
-        self.follower.get(reversed_names[1], follow=True)
+        self.follower.get(reversed_unfollow, follow=True)
 
         follow = Follow.objects.filter(
             user=PostsViewTests.follower_user,
